@@ -1,5 +1,27 @@
 class Ordenamiento:
-    pass
+    def quick_sort(self,lista, clave):
+        if len(lista) <= 1:
+            return lista
+
+        pivote = lista[0]
+
+        if clave == "nombre":
+            menores = [x for x in lista[1:] if x.nombre < pivote.nombre]
+            mayores = [x for x in lista[1:] if x.nombre > pivote.nombre]
+
+        elif clave == "precio":
+            menores = [x for x in lista[1:] if x.precio < pivote.precio]
+            mayores = [x for x in lista[1:] if x.precio > pivote.precio]
+
+        elif clave == "stock":
+            menores = [x for x in lista[1:] if x.stock < pivote.stock]
+            mayores = [x for x in lista[1:] if x.stock > pivote.stock]
+
+        else:
+            print("Criterio de orden inválido")
+            return lista
+
+        return Ordenamiento.quick_sort(self,menores, clave) + [pivote] + Ordenamiento.quick_sort(self,mayores, clave)
 class Buscar:
     pass
 
