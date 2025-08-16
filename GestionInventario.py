@@ -91,7 +91,7 @@ class Ventas:
                 codigo, nombre, cantidad, total = venta
                 print(f"[{codigo}] {nombre} - {cantidad} unidades - Total: Q{total:.2f}")
                 total_general += total
-            print(f"\n💰 Total acumulado de ventas: Q{total_general:.2f}")
+            print(f"\n Total acumulado de ventas: Q{total_general:.2f}")
 
     def filtrar_por_codigo(self, codigo: str):
         ventas_filtradas = [v for v in self.historial if v[0] == codigo]
@@ -101,3 +101,88 @@ class Ventas:
         for venta in ventas_filtradas:
             _, nombre, cantidad, total = venta
             print(f"{nombre} - {cantidad} unidades - Q{total:.2f}")
+
+def mostrar_menu():
+    print("\n MENÚ PRINCIPAL")
+    print("1. Agregar producto")
+    print("2. Eliminar producto")
+    print("3. Actualizar producto")
+    print("4. Mostrar inventario")
+    print("5. Registrar venta")
+    print("6. Mostrar historial de ventas")
+    print("7. Filtrar ventas por código")
+    print("8. Salir")
+
+def main():
+    inventario = Inventario()
+    ventas = Ventas(inventario)
+
+    while True:
+        mostrar_menu()
+        opcion = input("Seleccione una opción: ").strip()
+
+        try:
+            if opcion == "1":
+                codigo = input("Código: ")
+                nombre = input("Nombre: ")
+                categoria = input("Categoría: ")
+                precio = float(input("Precio: "))
+                stock = int(input("Stock: "))
+                producto = Producto(codigo, nombre, categoria, precio, stock)
+                inventario.agregar_producto(producto)
+                print(" Producto agregado.")
+
+            elif opcion == "2":
+                codigo = input("Código del producto a eliminar: ")
+                inventario.eliminar_producto(codigo)
+                print("🗑Producto eliminado.")
+
+            elif opcion == "3":
+                codigo = input("Código del producto a actualizar: ")
+                nuevo_precio = input("Nuevo precio (dejar vacío si no cambia): ")
+                nuevo_stock = input("Nuevo stock (dejar vacío si no cambia): ")
+                precio = float(nuevo_precio) if nuevo_precio else None
+                stock = int(nuevo_stock) if nuevo_stock else None
+                inventario.actualizar_producto(codigo, precio, stock)
+                print("Producto actualizado.")
+
+            elif opcion == "4":
+                productos = inventario.obtener_lista()
+                if not productos:
+                    print("Inventario vacío.")
+                else:
+                    print("\n INVENTARIO:")
+                    for p in productos:
+                        print(p)
+
+            elif opcion == "5":
+                codigo = input("Código del producto: ")
+                cantidad = int(input("Cantidad a vender: "))
+                total = ventas.vender(codigo, cantidad)
+                print(f"✅ Venta registrada. Total: Q{total:.2f}")
+
+            elif opcion == "6":
+                ventas.mostrar_historial()
+
+            elif opcion == "7":
+                codigo = input("Código del producto: ")
+                ventas.filtrar_por_codigo(codigo)
+
+            elif opcion == "8":
+                print(" ¡Hasta luego!")
+                break
+
+            else:
+                print(" Opción inválida.")
+
+        except CodigoDuplicadoError as e:
+            print(f"Error: {e}")
+        except ProductoNoExisteError as e:
+            print(f" Error: {e}")
+        except ValueError as e:
+            print(f"️ Error de entrada: {e}")
+        except Exception as e:
+            print(f" Error inesperado: {e}")
+
+if __name__ == "__main__":
+    main()
