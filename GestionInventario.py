@@ -92,3 +92,12 @@ class Ventas:
                 print(f"[{codigo}] {nombre} - {cantidad} unidades - Total: Q{total:.2f}")
                 total_general += total
             print(f"\n💰 Total acumulado de ventas: Q{total_general:.2f}")
+
+    def filtrar_por_codigo(self, codigo: str):
+        ventas_filtradas = [v for v in self.historial if v[0] == codigo]
+        if not ventas_filtradas:
+            print("No hay ventas para ese producto.")
+            return
+        for venta in ventas_filtradas:
+            _, nombre, cantidad, total = venta
+            print(f"{nombre} - {cantidad} unidades - Q{total:.2f}")
