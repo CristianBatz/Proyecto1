@@ -118,20 +118,23 @@ class Ordenamiento:
 
         if clave == "nombre":
             menores = [x for x in lista[1:] if x.nombre < pivote.nombre]
+            iguales = [x for x in lista[1:] if x.nombre == pivote.nombre]
             mayores = [x for x in lista[1:] if x.nombre > pivote.nombre]
 
         elif clave == "precio":
             menores = [x for x in lista[1:] if x.precio < pivote.precio]
+            iguales = [x for x in lista[1:] if x.precio == pivote.precio]
             mayores = [x for x in lista[1:] if x.precio > pivote.precio]
 
         elif clave == "stock":
             menores = [x for x in lista[1:] if x.stock < pivote.stock]
+            iguales = [x for x in lista[1:] if x.stock == pivote.stock]
             mayores = [x for x in lista[1:] if x.stock > pivote.stock]
 
         else:
             raise ValueError("Criterio de orden inválido")
 
-        return self.quick_sort(menores, clave) + [pivote] + self.quick_sort(mayores, clave)
+        return self.quick_sort(menores, clave) + iguales + [pivote] + self.quick_sort(mayores, clave)
 
 
 class Buscar:
