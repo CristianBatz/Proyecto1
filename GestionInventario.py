@@ -60,3 +60,24 @@ class Inventario:
 
     def obtener_lista(self):
         return list(self.productos.values())
+
+class Ventas:
+    def __init__(self, inventario: Inventario):
+        self.inventario = inventario
+        self.historial = []
+
+    def vender(self, codigo: str, cantidad: int):
+        if codigo not in self.inventario.productos:
+            raise ProductoNoExisteError("No se encontró el producto.")
+        producto = self.inventario.productos[codigo]
+        if cantidad < 0:
+            raise ValueError("La cantidad no puede ser negativa.")
+        if producto.stock < cantidad:
+            raise ValueError(f"Stock insuficiente. Disponible: {producto.stock}")
+        producto.stock -= cantidad
+        total = cantidad * producto.precio
+        self.historial.append((producto.codigo, producto.nombre, cantidad, total))
+        return total
+
+    def mostrar_historial(self):
+        return self.historial
