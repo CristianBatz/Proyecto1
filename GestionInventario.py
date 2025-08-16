@@ -47,7 +47,6 @@ class Inventario:
         if producto.codigo in self.productos:
             raise CodigoDuplicadoError("El código ya existe.")
         self.productos[producto.codigo] = producto
-        print("Producto agregado correctamente.")
 
     def eliminar_producto(self, codigo: str):
         if codigo not in self.productos:
@@ -60,9 +59,9 @@ class Inventario:
             raise ProductoNoExisteError("No se encontró el producto.")
         producto = self.productos[codigo]
         if nuevo_precio is not None:
-            producto.actualizar_Precio(nuevo_precio)
+            producto.actualizar_precio(nuevo_precio)
         if nuevo_stock is not None:
-            producto.actualizar_Stock(nuevo_stock)
+            producto.actualizar_stock(nuevo_stock)
         print("Producto actualizado correctamente.")
 
     def obtener_lista(self):
