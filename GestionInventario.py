@@ -47,11 +47,13 @@ class Inventario:
         if producto.codigo in self.productos:
             raise CodigoDuplicadoError("El código ya existe.")
         self.productos[producto.codigo] = producto
+        print("Producto agregado correctamente.")
 
     def eliminar_producto(self, codigo: str):
         if codigo not in self.productos:
             raise ProductoNoExisteError("No se encontró el producto.")
         del self.productos[codigo]
+        print("Producto eliminado correctamente.")
 
     def actualizar_producto(self, codigo: str, nuevo_precio: float = None, nuevo_stock: int = None):
         if codigo not in self.productos:
@@ -61,6 +63,7 @@ class Inventario:
             producto.actualizar_Precio(nuevo_precio)
         if nuevo_stock is not None:
             producto.actualizar_Stock(nuevo_stock)
+        print("Producto actualizado correctamente.")
 
     def obtener_lista(self):
         return list(self.productos.values())
@@ -82,7 +85,7 @@ class Ventas:
         producto.stock -= cantidad
         total = cantidad * producto.precio
         self.historial.append((producto.codigo, producto.nombre, cantidad, total))
-        return total
+        print(f"Venta registrada correctamente. Total: Q{total:.2f}")
 
     def mostrar_historial(self):
         if not self.historial:
@@ -155,17 +158,21 @@ class Menu:
         print("2. Eliminar producto")
         print("3. Actualizar producto")
         print("4. Mostrar inventario")
-        print("5. Registrar venta")
-        print("6. Mostrar historial de ventas")
-        print("7. Filtrar ventas por código")
-        print("8. Salir")
+        print("5. Buscar producto")
+        print("6. Registrar venta")
+        print("7. Mostrar historial de ventas")
+        print("8. Filtrar ventas por código")
+        print("9. Salir")
 
 
 inventario = Inventario()
 ventas = Ventas(inventario)
+ordenador = Ordenamiento()
+buscador = Buscar()
+menu = Menu()
 opcion = 0
-while opcion != 8:
-    mostrar_menu()
+while opcion != 9:
+    menu.mostrar_menu()
     opcion = input("Seleccione una opción: ").strip()
 
     try:
@@ -205,7 +212,6 @@ while opcion != 8:
             case 2:
                 codigo = input("Código del producto a eliminar: ")
                 inventario.eliminar_producto(codigo)
-                print("🗑 Producto eliminado.")
 
             case 3:
                 codigo = input("Código del producto a actualizar: ")
@@ -214,7 +220,6 @@ while opcion != 8:
                 precio = float(nuevo_precio) if nuevo_precio else None
                 stock = int(nuevo_stock) if nuevo_stock else None
                 inventario.actualizar_producto(codigo, precio, stock)
-                print(" Producto actualizado.")
 
             case 4:
                 productos = inventario.obtener_lista()
@@ -224,21 +229,39 @@ while opcion != 8:
                     print("\n INVENTARIO:")
                     for p in productos:
                         print(p)
-
+                    criterio = input("Ordenar por (nombre/precio/stock): ").strip().lower()
+                    productos_ordenados = ordenador.quick_sort(productos, criterio)
+                    print("\nINVENTARIO ORDENADO:")
+                    for p in productos_ordenados:
+                        print(p)
             case 5:
-                codigo = input("Código del producto: ")
-                cantidad = int(input("Cantidad a vender: "))
-                total = ventas.vender(codigo, cantidad)
-                print(f"Venta registrada. Total: Q{total:.2f}")
+                productos = inventario.obtener_lista()
+                if not productos:
+                    print("Inventario vacío.")
+                else:
+                    criterio = input("Buscar por (codigo/nombre/categoria): ").strip().lower()
+                    valor = input("Valor a buscar: ").strip()
+                    resultados = buscador.buscar_valor(productos, criterio, valor)
+                    if not resultados:
+                        print("No se encontraron productos.")
+                    else:
+                        print("\nRESULTADOS DE LA BÚSQUEDA:")
+                        for r in resultados:
+                            print(r)
 
             case 6:
-                ventas.mostrar_historial()
+                codigo = input("Código del producto: ")
+                cantidad = int(input("Cantidad a vender: "))
+                ventas.vender(codigo, cantidad)
 
             case 7:
+                ventas.mostrar_historial()
+
+            case 8:
                 codigo = input("Código del producto: ")
                 ventas.filtrar_por_codigo(codigo)
 
-            case 8:
+            case 9:
                 print("¡Hasta luego!")
                 break
             case _:
