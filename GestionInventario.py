@@ -1,8 +1,10 @@
 class CodigoDuplicadoError(Exception):
     pass
 
+
 class ProductoNoExisteError(Exception):
     pass
+
 
 class Producto:
     def __init__(self, codigo: str, nombre: str, categoria: str, precio: float, stock: int):
@@ -36,6 +38,7 @@ class Producto:
     def __str__(self):
         return f"[{self.codigo}] {self.nombre} | Cat: {self.categoria} | Precio: Q{self.precio:.2f} | Stock: {self.stock}"
 
+
 class Inventario:
     def __init__(self):
         self.productos = {}
@@ -61,6 +64,7 @@ class Inventario:
 
     def obtener_lista(self):
         return list(self.productos.values())
+
 
 class Ventas:
     def __init__(self, inventario: Inventario):
@@ -102,8 +106,9 @@ class Ventas:
             _, nombre, cantidad, total = venta
             print(f"{nombre} - {cantidad} unidades - Q{total:.2f}")
 
+
 class Ordenamiento:
-    def quick_sort(self,lista, clave):
+    def quick_sort(self, lista, clave):
         if len(lista) <= 1:
             return lista
 
@@ -125,10 +130,11 @@ class Ordenamiento:
             print("Criterio de orden inválido")
             return lista
 
-        return Ordenamiento.quick_sort(self,menores, clave) + [pivote] + Ordenamiento.quick_sort(self,mayores, clave)
+        return self.quick_sort(menores, clave) + [pivote] + self.quick_sort(mayores, clave)
+
 
 class Buscar:
-    def buscar_valor(self,lista, criterio, valor):
+    def buscar_valor(self, lista, criterio, valor):
         resultados = []
         valor = valor.lower()
         for producto in lista:
@@ -140,27 +146,31 @@ class Buscar:
                 resultados.append(producto)
         return resultados
 
-def mostrar_menu():
-    print("\nMENÚ PRINCIPAL")
-    print("1. Agregar producto")
-    print("2. Eliminar producto")
-    print("3. Actualizar producto")
-    print("4. Mostrar inventario")
-    print("5. Registrar venta")
-    print("6. Mostrar historial de ventas")
-    print("7. Filtrar ventas por código")
-    print("8. Salir")
 
-def main():
-    inventario = Inventario()
-    ventas = Ventas(inventario)
+class Menu:
 
-    while True:
-        mostrar_menu()
-        opcion = input("Seleccione una opción: ").strip()
+    def mostrar_menu(self):
+        print("\nMENÚ PRINCIPAL")
+        print("1. Agregar producto")
+        print("2. Eliminar producto")
+        print("3. Actualizar producto")
+        print("4. Mostrar inventario")
+        print("5. Registrar venta")
+        print("6. Mostrar historial de ventas")
+        print("7. Filtrar ventas por código")
+        print("8. Salir")
 
-        try:
-            if opcion == "1":
+
+inventario = Inventario()
+ventas = Ventas(inventario)
+opcion = 0
+while opcion != 8:
+    mostrar_menu()
+    opcion = input("Seleccione una opción: ").strip()
+
+    try:
+        match int(opcion):
+            case 1:
                 print("\n Agregar productos al inventario")
                 contador = 0
                 productos_agregados = []
@@ -192,12 +202,12 @@ def main():
                     except ValueError as e:
                         print(f"️ Entrada inválida: {e}")
 
-            elif opcion == "2":
+            case 2:
                 codigo = input("Código del producto a eliminar: ")
                 inventario.eliminar_producto(codigo)
                 print("🗑 Producto eliminado.")
 
-            elif opcion == "3":
+            case 3:
                 codigo = input("Código del producto a actualizar: ")
                 nuevo_precio = input("Nuevo precio (dejar vacío si no cambia): ")
                 nuevo_stock = input("Nuevo stock (dejar vacío si no cambia): ")
@@ -206,7 +216,7 @@ def main():
                 inventario.actualizar_producto(codigo, precio, stock)
                 print(" Producto actualizado.")
 
-            elif opcion == "4":
+            case 4:
                 productos = inventario.obtener_lista()
                 if not productos:
                     print(" Inventario vacío.")
@@ -215,34 +225,30 @@ def main():
                     for p in productos:
                         print(p)
 
-            elif opcion == "5":
+            case 5:
                 codigo = input("Código del producto: ")
                 cantidad = int(input("Cantidad a vender: "))
                 total = ventas.vender(codigo, cantidad)
                 print(f"Venta registrada. Total: Q{total:.2f}")
 
-            elif opcion == "6":
+            case 6:
                 ventas.mostrar_historial()
 
-            elif opcion == "7":
+            case 7:
                 codigo = input("Código del producto: ")
                 ventas.filtrar_por_codigo(codigo)
 
-            elif opcion == "8":
+            case 8:
                 print("¡Hasta luego!")
                 break
-
-            else:
+            case _:
                 print(" Opción inválida.")
 
-        except CodigoDuplicadoError as e:
-            print(f"Error: {e}")
-        except ProductoNoExisteError as e:
-            print(f" Error: {e}")
-        except ValueError as e:
-            print(f"Error de entrada: {e}")
-        except Exception as e:
-            print(f" Error inesperado: {e}")
-
-if __name__ == "__main__":
-    main()
+    except CodigoDuplicadoError as e:
+        print(f"Error: {e}")
+    except ProductoNoExisteError as e:
+        print(f" Error: {e}")
+    except ValueError as e:
+        print(f"Error de entrada: {e}")
+    except Exception as e:
+        print(f" Error inesperado: {e}")
