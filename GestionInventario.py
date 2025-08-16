@@ -22,8 +22,19 @@ class Ordenamiento:
             return lista
 
         return Ordenamiento.quick_sort(self,menores, clave) + [pivote] + Ordenamiento.quick_sort(self,mayores, clave)
+
 class Buscar:
-    pass
+    def buscar_valor(self,lista, criterio, valor):
+        resultados = []
+        valor = valor.lower()
+        for producto in lista:
+            if criterio == "codigo" and producto.codigo.lower() == valor:
+                resultados.append(producto)
+            elif criterio == "nombre" and valor in producto.nombre.lower():
+                resultados.append(producto)
+            elif criterio == "categoria" and valor in producto.categoria.lower():
+                resultados.append(producto)
+        return resultados
 
 opcion = 0
 while opcion != 6:
