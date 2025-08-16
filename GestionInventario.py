@@ -5,35 +5,36 @@ class ProductoNoExisteError(Exception):
     pass
 
 class Producto:
-        def __init__(self,codigo:str,nombre:str, categoria:str,precio:float, stock:int ):
-           if not codigo.strip():
-               raise ValueError("El codigo no puede quedar en vacio debe llenar este parametro ")
-           if not nombre.strip():
-               raise ValueError("El nombre no debe quedar en vacio debe llenar este parametro")
-           if not categoria.strip():
-               raise ValueError("La categoria no debe quedar en vacio debe llenar este parametro")
-           if precio<0:
-               raise ValueError("El valor no debe ser un valor negativo")
-           if stock<0:
-               raise ValueError("El stock no debe quedar en negativo")
+    def __init__(self, codigo: str, nombre: str, categoria: str, precio: float, stock: int):
+        if not codigo.strip():
+            raise ValueError("El código no puede quedar vacío.")
+        if not nombre.strip():
+            raise ValueError("El nombre no puede quedar vacío.")
+        if not categoria.strip():
+            raise ValueError("La categoría no puede quedar vacía.")
+        if precio < 0:
+            raise ValueError("El precio no puede ser negativo.")
+        if stock < 0:
+            raise ValueError("El stock no puede ser negativo.")
 
-           self.codigo=codigo
-           self.nombre=nombre
-           self.categoria=categoria
-           self.precio=precio
-           self.stock=stock
-        def actualizar_Precio(self, nuevo_precio:float):
-            if nuevo_precio<0:
-                raise ValueError("El precio no puede ser negativo")
-            self.precio=nuevo_precio
-        def actualizar_Stock(self,nuevo_stock:int):
-            if nuevo_stock<0:
-                raise ValueError("El nuevo stock no puede ser negativo")
-            self.stock=nuevo_stock
+        self.codigo = codigo
+        self.nombre = nombre
+        self.categoria = categoria
+        self.precio = precio
+        self.stock = stock
 
-        def __str__(self):
-            return f"[{self.codigo}] {self.nombre} | Cat: {self.categoria} | Precio: Q{self.precio:.2f} | Stock: {self.stock}"
+    def actualizar_Precio(self, nuevo_precio: float):
+        if nuevo_precio < 0:
+            raise ValueError("El precio no puede ser negativo.")
+        self.precio = nuevo_precio
 
+    def actualizar_Stock(self, nuevo_stock: int):
+        if nuevo_stock < 0:
+            raise ValueError("El nuevo stock no puede ser negativo.")
+        self.stock = nuevo_stock
+
+    def __str__(self):
+        return f"[{self.codigo}] {self.nombre} | Cat: {self.categoria} | Precio: Q{self.precio:.2f} | Stock: {self.stock}"
 
 class Inventario:
     def __init__(self):
@@ -54,9 +55,9 @@ class Inventario:
             raise ProductoNoExisteError("No se encontró el producto.")
         producto = self.productos[codigo]
         if nuevo_precio is not None:
-            producto.actualizar_precio(nuevo_precio)
+            producto.actualizar_Precio(nuevo_precio)
         if nuevo_stock is not None:
-            producto.actualizar_stock(nuevo_stock)
+            producto.actualizar_Stock(nuevo_stock)
 
     def obtener_lista(self):
         return list(self.productos.values())
@@ -80,18 +81,17 @@ class Ventas:
         return total
 
     def mostrar_historial(self):
-        def mostrar_historial(self):
-            if not self.historial:
-                print(" No hay ventas registradas.")
-                return
+        if not self.historial:
+            print("No hay ventas registradas.")
+            return
 
-            print("\n HISTORIAL DE VENTAS:")
-            total_general = 0
-            for venta in self.historial:
-                codigo, nombre, cantidad, total = venta
-                print(f"[{codigo}] {nombre} - {cantidad} unidades - Total: Q{total:.2f}")
-                total_general += total
-            print(f"\n Total acumulado de ventas: Q{total_general:.2f}")
+        print("\nHISTORIAL DE VENTAS:")
+        total_general = 0
+        for venta in self.historial:
+            codigo, nombre, cantidad, total = venta
+            print(f"[{codigo}] {nombre} - {cantidad} unidades - Total: Q{total:.2f}")
+            total_general += total
+        print(f"\n Total acumulado de ventas: Q{total_general:.2f}")
 
     def filtrar_por_codigo(self, codigo: str):
         ventas_filtradas = [v for v in self.historial if v[0] == codigo]
@@ -103,7 +103,7 @@ class Ventas:
             print(f"{nombre} - {cantidad} unidades - Q{total:.2f}")
 
 def mostrar_menu():
-    print("\n MENÚ PRINCIPAL")
+    print("\nMENÚ PRINCIPAL")
     print("1. Agregar producto")
     print("2. Eliminar producto")
     print("3. Actualizar producto")
@@ -123,19 +123,41 @@ def main():
 
         try:
             if opcion == "1":
-                codigo = input("Código: ")
-                nombre = input("Nombre: ")
-                categoria = input("Categoría: ")
-                precio = float(input("Precio: "))
-                stock = int(input("Stock: "))
-                producto = Producto(codigo, nombre, categoria, precio, stock)
-                inventario.agregar_producto(producto)
-                print(" Producto agregado.")
+                print("\n Agregar productos al inventario")
+                contador = 0
+                productos_agregados = []
+
+                while True:
+                    codigo = input(f"\nProducto #{contador + 1} - Código (o 'fin' para terminar): ").strip()
+                    if codigo.lower() == "fin":
+                        print(f"\n Se agregaron {contador} productos.")
+                        if productos_agregados:
+                            print("\n Resumen de productos agregados:")
+                            for p in productos_agregados:
+                                print(p)
+                        break
+
+                    if codigo in inventario.productos:
+                        print("El código ya existe. Intente con otro.")
+                        continue
+
+                    try:
+                        nombre = input("Nombre: ").strip()
+                        categoria = input("Categoría: ").strip()
+                        precio = float(input("Precio: "))
+                        stock = int(input("Stock: "))
+                        producto = Producto(codigo, nombre, categoria, precio, stock)
+                        inventario.agregar_producto(producto)
+                        productos_agregados.append(producto)
+                        contador += 1
+                        print(f"Producto #{contador} agregado.")
+                    except ValueError as e:
+                        print(f"️ Entrada inválida: {e}")
 
             elif opcion == "2":
                 codigo = input("Código del producto a eliminar: ")
                 inventario.eliminar_producto(codigo)
-                print("🗑Producto eliminado.")
+                print("🗑 Producto eliminado.")
 
             elif opcion == "3":
                 codigo = input("Código del producto a actualizar: ")
@@ -144,12 +166,12 @@ def main():
                 precio = float(nuevo_precio) if nuevo_precio else None
                 stock = int(nuevo_stock) if nuevo_stock else None
                 inventario.actualizar_producto(codigo, precio, stock)
-                print("Producto actualizado.")
+                print(" Producto actualizado.")
 
             elif opcion == "4":
                 productos = inventario.obtener_lista()
                 if not productos:
-                    print("Inventario vacío.")
+                    print(" Inventario vacío.")
                 else:
                     print("\n INVENTARIO:")
                     for p in productos:
@@ -159,7 +181,7 @@ def main():
                 codigo = input("Código del producto: ")
                 cantidad = int(input("Cantidad a vender: "))
                 total = ventas.vender(codigo, cantidad)
-                print(f"✅ Venta registrada. Total: Q{total:.2f}")
+                print(f"Venta registrada. Total: Q{total:.2f}")
 
             elif opcion == "6":
                 ventas.mostrar_historial()
@@ -169,7 +191,7 @@ def main():
                 ventas.filtrar_por_codigo(codigo)
 
             elif opcion == "8":
-                print(" ¡Hasta luego!")
+                print("¡Hasta luego!")
                 break
 
             else:
@@ -180,7 +202,7 @@ def main():
         except ProductoNoExisteError as e:
             print(f" Error: {e}")
         except ValueError as e:
-            print(f"️ Error de entrada: {e}")
+            print(f"Error de entrada: {e}")
         except Exception as e:
             print(f" Error inesperado: {e}")
 
