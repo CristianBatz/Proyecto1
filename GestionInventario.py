@@ -80,4 +80,15 @@ class Ventas:
         return total
 
     def mostrar_historial(self):
-        return self.historial
+        def mostrar_historial(self):
+            if not self.historial:
+                print(" No hay ventas registradas.")
+                return
+
+            print("\n HISTORIAL DE VENTAS:")
+            total_general = 0
+            for venta in self.historial:
+                codigo, nombre, cantidad, total = venta
+                print(f"[{codigo}] {nombre} - {cantidad} unidades - Total: Q{total:.2f}")
+                total_general += total
+            print(f"\n💰 Total acumulado de ventas: Q{total_general:.2f}")
