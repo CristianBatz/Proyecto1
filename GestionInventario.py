@@ -25,12 +25,12 @@ class Producto:
         self.precio = precio
         self.stock = stock
 
-    def actualizar_Precio(self, nuevo_precio: float):
+    def actualizar_precio(self, nuevo_precio: float):
         if nuevo_precio < 0:
             raise ValueError("El precio no puede ser negativo.")
         self.precio = nuevo_precio
 
-    def actualizar_Stock(self, nuevo_stock: int):
+    def actualizar_stock(self, nuevo_stock: int):
         if nuevo_stock < 0:
             raise ValueError("El nuevo stock no puede ser negativo.")
         self.stock = nuevo_stock
@@ -130,8 +130,7 @@ class Ordenamiento:
             mayores = [x for x in lista[1:] if x.stock > pivote.stock]
 
         else:
-            print("Criterio de orden inválido")
-            return lista
+            raise ValueError("Criterio de orden inválido")
 
         return self.quick_sort(menores, clave) + [pivote] + self.quick_sort(mayores, clave)
 
